@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klinik Sehat - Sistem Antrian Terpadu</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+            #printableTicket, #printableTicket * {
+                visibility: visible !important;
+            }
+            #printableTicket {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 10px !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-slate-100 font-sans text-slate-800">
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar Menu Kiri -->
+        <aside class="w-64 bg-white border-r border-slate-200 hidden md:flex flex-col justify-between p-5">
+            <div>
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="bg-emerald-600 text-white p-2 rounded-xl font-bold">KS</div>
+                    <div>
+                        <h1 class="font-bold text-sm text-slate-800">Klinik Sehat</h1>
+                        <p class="text-xs text-slate-400">Sistem Antrian Terpadu</p>
+                    </div>
+                </div>
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Modul Operasional</p>
+                <nav class="space-y-1">
+                    <a href="admin.html"
+                        class="flex items-center gap-3 px-3 py-2.5 bg-sky-500 text-white rounded-xl text-sm font-medium shadow-sm">Resepsionis</a>
+                    <a href="doktor.html"
+                        class="flex items-center gap-3 px-3 py-2.5 text-slate-600 hover:bg-slate-100 rounded-xl text-sm font-medium transition">Pemeriksaan
+                        Dokter</a>
+                    <a href="tv.html" target="_blank"
+                        class="flex items-center gap-3 px-3 py-2.5 text-slate-600 hover:bg-slate-100 rounded-xl text-sm font-medium transition">Monitor
+                        Ruang Tunggu</a>
+                </nav>
+            </div>
+            <div class="bg-emerald-50 border border-emerald-100 p-3 rounded-xl">
+                <p class="text-xs font-bold text-emerald-800">Sinkronisasi Aktif</p>
+                <p class="text-[10px] text-emerald-600 mt-0.5">SQLite Database Terhubung</p>
+            </div>
+        </aside>
+
+        <!-- Konten Utama Kanan -->
+        <main class="flex-1 flex flex-col overflow-y-auto p-6">
+            <!-- Header Atas -->
+            <header
+                class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">Dashboard Resepsionis / Loket</h2>
+                    <p class="text-xs text-slate-500">Kelola pendaftaran pasien masuk secara real-time</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm font-bold text-slate-700" id="clock">00:00:00 WIB</p>
+                    <p class="text-xs text-slate-400" id="dateDisplay">-</p>
+                </div>
+            </header>
+
+            <!-- Kartu Statistik Singkat -->
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-xs text-slate-400 font-medium">Total Antrian Hari Ini</p>
+                    <h3 id="statTotal" class="text-2xl font-black text-slate-800 mt-1">0</h3>
+                    <span class="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full">+ Data
+                        Lokal Aktif</span>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-xs text-slate-400 font-medium">Menunggu di Ruang Tunggu</p>
+                    <h3 id="statWaiting" class="text-2xl font-black text-slate-800 mt-1">0</h3>
+                    <span class="text-[10px] text-amber-600 font-bold bg-amber-50 px-2 py-0.5 rounded-full">Estimasi
+                        Cepat</span>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-xs text-slate-400 font-medium">Sedang Diperiksa</p>
+                    <h3 id="statInProgress" class="text-2xl font-black text-slate-800 mt-1">0</h3>
+                    <span class="text-[10px] text-sky-600 font-bold bg-sky-50 px-2 py-0.5 rounded-full">Poli Gigi &
+                        Mulut</span>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-xs text-slate-400 font-medium">Layanan Selesai</p>
+                    <h3 id="statDone" class="text-2xl font-black text-slate-800 mt-1">0</h3>
+                    <span
+                        class="text-[10px] text-purple-600 font-bold bg-purple-50 px-2 py-0.5 rounded-full">Normal</span>
+                </div>
+            </div>
+
+            <!-- Grid Form Pendaftaran & Tabel Antrian -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Form Input -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm lg:col-span-1">
+                    <h3 class="font-bold text-sm text-slate-700 mb-4">Pendaftaran Cepat Pasien</h3>
+                    <form id="queueForm" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Lengkap Pasien *</label>
+                            <input type="text" id="name" required
+                                class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-50"
+                                placeholder="Contoh: Bpk. Sugeng">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">NIK / No. HP / BPJS *</label>
+                            <input type="text" id="nik_phone" required
+                                class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-50"
+                                placeholder="08xxxxxxxxxx">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Poli Tujuan</label>
+                            <select id="poli"
+                                class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-50">
+                                <option value="Poli Gigi & Mulut">Poli Gigi & Mulut</option>
+                                <option value="Poli Umum">Poli Umum</option>
+                                <option value="Poli Lansia">Poli Lansia (Prioritas)</option>
+                                <option value="Poli Anak (KIA)">Poli Anak (KIA)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Nomor Tiket Otomatis</label>
+                            <input type="text" id="queue_number" readonly
+                                class="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-xl text-sm font-bold text-sky-600"
+                                value="G-001">
+                        </div>
+                        <button type="submit"
+                            class="w-full bg-sky-600 hover:bg-sky-700 text-white font-medium py-2.5 px-4 rounded-xl text-sm transition shadow-sm">
+                            Cetak & Simpan Antrian
+                        </button>
+                    </form>
+
+                    <!-- Tombol Reset -->
+                    <div class="mt-4 pt-4 border-t border-slate-100">
+                        <button onclick="resetAntrian()"
+                            class="w-full bg-red-50 hover:bg-red-100 text-red-600 font-medium py-2 px-4 rounded-xl text-xs transition border border-red-200">
+                            🗑️ Reset Semua Antrian Hari Ini
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabel Data Antrian Aktif -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm lg:col-span-2">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-sm text-slate-700">Daftar Antrian Aktif</h3>
+                        <span class="text-xs text-slate-400">Sinkronisasi Real-time Database</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr
+                                    class="border-b border-slate-100 text-[11px] text-slate-400 uppercase tracking-wider">
+                                    <th class="py-2.5 px-3">No. Tiket</th>
+                                    <th class="py-2.5 px-3">Nama Pasien</th>
+                                    <th class="py-2.5 px-3">Poli Tujuan</th>
+                                    <th class="py-2.5 px-3">Status</th>
+                                    <th class="py-2.5 px-3">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="queueTableBody" class="text-sm text-slate-700">
+                                <!-- Data dimuat via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Template Tiket Antrian untuk Dicetak -->
+    <div id="printableTicket" class="hidden print:block bg-white p-6 border border-slate-300 rounded-2xl text-center text-slate-800 max-w-xs mx-auto my-4 shadow-md font-sans">
+        <h2 class="text-xl font-black uppercase tracking-wider text-emerald-700">KLINIK SEHAT</h2>
+        <p class="text-xs text-slate-500 font-medium">Sistem Antrian Terpadu</p>
+        <div class="border-b border-dashed border-slate-300 my-3"></div>
+
+        <p id="ticketDate" class="text-[11px] text-slate-400 font-semibold mb-1">-</p>
+        <p id="ticketPoli" class="text-xs font-bold text-sky-600 uppercase tracking-wide">Poli Gigi & Mulut</p>
+
+        <div class="my-3 py-3 bg-sky-50 rounded-xl border border-sky-100">
+            <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Nomor Tiket Anda</p>
+            <p id="ticketNumber" class="text-4xl font-black text-sky-600 tracking-tight my-1">G-001</p>
+        </div>
+
+        <div class="text-left text-xs space-y-1 my-3 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+            <p class="text-slate-600"><strong>Nama:</strong> <span id="ticketName" class="text-slate-800 font-semibold">-</span></p>
+            <p class="text-slate-600"><strong>NIK / HP:</strong> <span id="ticketNikPhone" class="text-slate-800 font-semibold">-</span></p>
+        </div>
+
+        <div class="border-b border-dashed border-slate-300 my-3"></div>
+        <p class="text-[10px] text-slate-400 font-medium">Terima kasih atas kunjungan Anda.<br>Mohon menunggu hingga nomor antrian dipanggil.</p>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api/queues';
+
+        // ============================================================
+        // Fungsi Cetak Tiket
+        // ============================================================
+        function prepareAndPrintTicket(queue_number, name, nik_phone, poli, created_at) {
+            document.getElementById('ticketNumber').innerText = queue_number || '-';
+            document.getElementById('ticketName').innerText = name || '-';
+            document.getElementById('ticketNikPhone').innerText = nik_phone || '-';
+            document.getElementById('ticketPoli').innerText = poli || 'Poli Gigi & Mulut';
+
+            const d = created_at ? new Date(created_at) : new Date();
+            const dateStr = d.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const timeStr = d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+            document.getElementById('ticketDate').innerText = `${dateStr} • ${timeStr}`;
+
+            const ticketElem = document.getElementById('printableTicket');
+            ticketElem.classList.remove('hidden');
+
+            window.print();
+
+            setTimeout(() => {
+                ticketElem.classList.add('hidden');
+            }, 1000);
+        }
+
+        // ============================================================
+        // Jam & Tanggal Realtime
+        // ============================================================
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('id-ID') + ' WIB';
+
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('dateDisplay').innerText = now.toLocaleDateString('id-ID', options);
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ============================================================
+        // Prefix nomor tiket berdasarkan Poli
+        // ============================================================
+        const poliPrefix = {
+            'Poli Gigi & Mulut': 'G',
+            'Poli Umum': 'U',
+            'Poli Lansia': 'L',
+            'Poli Anak (KIA)': 'A'
+        };
+
+        document.getElementById('poli').addEventListener('change', () => {
+            generateQueueNumber();
+        });
+
+        // ============================================================
+        // Generate nomor tiket otomatis berdasarkan poli
+        // ============================================================
+        function generateQueueNumber(allData) {
+            const poli = document.getElementById('poli').value;
+            const prefix = poliPrefix[poli] || 'G';
+
+            if (!allData) {
+                // Jika tidak ada data, fetch dulu
+                fetch(API_URL)
+                    .then(r => r.json())
+                    .then(result => {
+                        const samePoli = result.data.filter(q => q.poli === poli);
+                        const nextNum = samePoli.length + 1;
+                        document.getElementById('queue_number').value = `${prefix}-${String(nextNum).padStart(3, '0')}`;
+                    })
+                    .catch(() => {
+                        document.getElementById('queue_number').value = `${prefix}-001`;
+                    });
+            } else {
+                const samePoli = allData.filter(q => q.poli === poli);
+                const nextNum = samePoli.length + 1;
+                document.getElementById('queue_number').value = `${prefix}-${String(nextNum).padStart(3, '0')}`;
+            }
+        }
+
+        // ============================================================
+        // Badge status dengan warna dinamis
+        // ============================================================
+        function getStatusBadge(status) {
+            const map = {
+                'waiting': {
+                    label: 'Menunggu',
+                    classes: 'bg-amber-50 text-amber-700 border-amber-100'
+                },
+                'in_progress': {
+                    label: 'Diperiksa',
+                    classes: 'bg-sky-50 text-sky-700 border-sky-100'
+                },
+                'done': {
+                    label: 'Selesai',
+                    classes: 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                },
+                'skipped': {
+                    label: 'Dilewati',
+                    classes: 'bg-red-50 text-red-600 border-red-100'
+                }
+            };
+            const info = map[status] || map['waiting'];
+            return `<span class="px-2.5 py-1 ${info.classes} text-xs rounded-full font-semibold border">${info.label}</span>`;
+        }
+
+        // ============================================================
+        // Fetch & render statistik
+        // ============================================================
+        async function fetchStats() {
+            try {
+                const response = await fetch(API_URL + '/stats');
+                const result = await response.json();
+                const s = result.data;
+                document.getElementById('statTotal').innerText = s.total || 0;
+                document.getElementById('statWaiting').innerText = s.waiting || 0;
+                document.getElementById('statInProgress').innerText = s.in_progress || 0;
+                document.getElementById('statDone').innerText = s.done || 0;
+            } catch (err) {
+                console.error('Gagal mengambil statistik:', err);
+            }
+        }
+
+        // ============================================================
+        // Fetch & render tabel antrian
+        // ============================================================
+        async function fetchQueues() {
+            try {
+                const response = await fetch(API_URL);
+                const result = await response.json();
+                const tbody = document.getElementById('queueTableBody');
+                tbody.innerHTML = '';
+
+                if (result.data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400 text-xs">Belum ada antrian terdaftar hari ini.</td></tr>`;
+                    document.getElementById('queue_number').value = `${poliPrefix[document.getElementById('poli').value] || 'G'}-001`;
+                    return;
+                }
+
+                // Generate nomor tiket berikutnya
+                generateQueueNumber(result.data);
+
+                result.data.forEach(item => {
+                    const safeName = (item.name || '').replace(/'/g, "\\'");
+                    const safePhone = (item.nik_phone || '').replace(/'/g, "\\'");
+                    const safePoli = (item.poli || 'Poli Gigi & Mulut').replace(/'/g, "\\'");
+                    const row = `
+                        <tr class="border-b border-slate-50 hover:bg-slate-50/50">
+                            <td class="py-3 px-3 font-extrabold text-sky-600">${item.queue_number}</td>
+                            <td class="py-3 px-3">
+                                <p class="font-semibold text-slate-800">${item.name}</p>
+                                <p class="text-xs text-slate-400">${item.nik_phone}</p>
+                            </td>
+                            <td class="py-3 px-3 text-xs font-medium text-slate-600">${item.poli || 'Poli Gigi & Mulut'}</td>
+                            <td class="py-3 px-3">${getStatusBadge(item.status)}</td>
+                            <td class="py-3 px-3">
+                                <div class="flex items-center gap-2">
+                                    <button onclick="prepareAndPrintTicket('${item.queue_number}', '${safeName}', '${safePhone}', '${safePoli}', '${item.created_at}')" 
+                                        class="text-xs text-sky-600 hover:text-sky-800 font-medium hover:underline transition">
+                                        🖨️ Cetak
+                                    </button>
+                                    <button onclick="hapusAntrian(${item.id})" 
+                                        class="text-xs text-red-500 hover:text-red-700 font-medium hover:underline transition">
+                                        Hapus
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            } catch (err) {
+                console.error('Gagal mengambil data:', err);
+            }
+        }
+
+        // ============================================================
+        // Submit form — tambah pasien ke antrian & cetak tiket
+        // ============================================================
+        document.getElementById('queueForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const nik_phone = document.getElementById('nik_phone').value.trim();
+            const queue_number = document.getElementById('queue_number').value.trim();
+            const poli = document.getElementById('poli').value;
+
+            if (!name || !nik_phone) {
+                alert('Nama Lengkap dan NIK / No. HP wajib diisi!');
+                return;
+            }
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, nik_phone, queue_number, poli })
+                });
+
+                if (response.ok) {
+                    // Cetak tiket antrian
+                    prepareAndPrintTicket(queue_number, name, nik_phone, poli);
+
+                    document.getElementById('queueForm').reset();
+                    // Reset poli ke default setelah form reset
+                    document.getElementById('poli').value = 'Poli Gigi & Mulut';
+                    refreshAll();
+                } else {
+                    const errRes = await response.json().catch(() => ({}));
+                    alert('Gagal menyimpan data ke database lokal: ' + (errRes.error || response.statusText));
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                alert('Gagal terhubung ke server backend. Pastikan server (http://localhost:5000) sedang berjalan.');
+            }
+        });
+
+        // ============================================================
+        // Hapus satu antrian
+        // ============================================================
+        async function hapusAntrian(id) {
+            if (!confirm('Yakin ingin menghapus antrian ini?')) return;
+
+            try {
+                const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    refreshAll();
+                } else {
+                    alert('Gagal menghapus antrian.');
+                }
+            } catch (err) {
+                console.error('Error hapus:', err);
+            }
+        }
+
+        // ============================================================
+        // Reset semua antrian hari ini
+        // ============================================================
+        async function resetAntrian() {
+            if (!confirm('⚠️ Yakin ingin menghapus SEMUA antrian hari ini? Tindakan ini tidak bisa dibatalkan.')) return;
+
+            try {
+                const response = await fetch(`${API_URL}/reset/today`, { method: 'DELETE' });
+                if (response.ok) {
+                    refreshAll();
+                } else {
+                    alert('Gagal mereset antrian.');
+                }
+            } catch (err) {
+                console.error('Error reset:', err);
+            }
+        }
+
+        // ============================================================
+        // Refresh semua data
+        // ============================================================
+        function refreshAll() {
+            fetchQueues();
+            fetchStats();
+        }
+
+        // Inisialisasi
+        refreshAll();
+        setInterval(refreshAll, 3000);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "app-dokter-gigi",
+  "version": "1.0.0",
+  "description": "Sistem Antrian Klinik Sehat",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-packager . KlinikSehat --platform=win32 --arch=x64 --out=dist"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "sqlite3": "^6.0.1"
+  },
+  "devDependencies": {
+    "electron": "^44.1.1",
+    "electron-packager": "^17.1.2"
+  }
+}
