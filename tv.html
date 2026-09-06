@@ -14,51 +14,64 @@
     <header
         class="flex justify-between items-center bg-slate-800/80 backdrop-blur px-6 py-4 rounded-2xl border border-slate-700">
         <div class="flex items-center gap-4">
-            <div class="bg-emerald-500 text-slate-900 font-black p-2.5 rounded-xl text-lg">KS</div>
+            <div class="bg-emerald-500 text-slate-900 font-black p-2.5 rounded-xl text-lg">D</div>
             <div>
-                <h1 class="text-xl font-extrabold tracking-wide text-white">KLINIK SEHAT UTAMA</h1>
-                <p class="text-xs text-slate-400">Layanan Terpadu • Poli Gigi & Mulut</p>
+                <h1 class="text-2xl font-extrabold tracking-wide text-white uppercase">DENTIST</h1>
+                <p class="text-xs text-slate-400">Praktek Dokter Gigi & Specialist Dental Care</p>
             </div>
         </div>
         <div class="text-right">
-            <p id="tvClock" class="text-2xl font-black text-emerald-400">00:00:00</p>
-            <p class="text-xs text-slate-400" id="tvDateDisplay">-</p>
+            <p id="tvClock" class="text-3xl font-black text-emerald-400 tracking-wider">00:00:00</p>
+            <p class="text-xs text-slate-300 font-medium" id="tvDateDisplay">-</p>
         </div>
     </header>
 
     <!-- Konten Utama Display -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto">
-        <!-- Kotak Panggilan Utama (Lebar) -->
-        <div
-            class="lg:col-span-7 bg-gradient-to-br from-emerald-600 to-teal-800 rounded-3xl p-8 shadow-2xl flex flex-col justify-center text-center border-4 border-emerald-400/30">
-            <p class="text-sm font-bold uppercase tracking-widest text-emerald-200 mb-2">Nomor Antrian Sekarang</p>
-            <h2 id="tvQueueNumber" class="text-8xl font-black tracking-wider text-white my-3">--</h2>
-            <p id="tvPatientName" class="text-2xl font-bold text-emerald-50 mb-1">-</p>
-            <p id="tvPatientPoli" class="text-sm font-medium text-emerald-200 mb-4">-</p>
-            <div class="inline-block bg-black/20 px-4 py-2 rounded-xl backdrop-blur border border-white/10 mx-auto">
-                <p class="text-sm font-medium text-emerald-100">Silakan Menuju Ruang Pemeriksaan 1</p>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto flex-1 items-stretch py-4">
+        <!-- Area Video (Kiri) -->
+        <div class="lg:col-span-7 bg-slate-800/80 backdrop-blur rounded-3xl p-4 shadow-xl border border-slate-700 flex flex-col justify-center overflow-hidden min-h-[360px]">
+            <div class="relative w-full h-full rounded-2xl overflow-hidden bg-black flex items-center justify-center">
+                <video class="w-full h-full object-cover rounded-2xl" autoplay loop muted controls>
+                    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                    Browser Anda tidak mendukung pemutar video.
+                </video>
+                <div class="absolute top-3 left-3 bg-black/60 backdrop-blur px-3 py-1 rounded-lg text-[10px] font-semibold text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Edukasi Kesehatan Gigi
+                </div>
             </div>
         </div>
 
-        <!-- Daftar Antrian Berikutnya -->
-        <div
-            class="lg:col-span-5 bg-slate-800/80 backdrop-blur rounded-3xl p-6 shadow-xl border border-slate-700 flex flex-col">
-            <h3
-                class="text-base font-bold text-slate-300 mb-4 border-b border-slate-700 pb-3 flex justify-between items-center">
-                <span>Antrian Selanjutnya</span>
-                <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full">Live Sync</span>
-            </h3>
-            <div id="tvNextList" class="space-y-3 overflow-y-auto flex-grow pr-1">
-                <!-- Data antrian berikutnya -->
+        <!-- Area Informasi Antrian (Kanan) -->
+        <div class="lg:col-span-5 flex flex-col gap-4 justify-between">
+            <!-- Kotak Panggilan Utama -->
+            <div class="bg-gradient-to-br from-emerald-600 to-teal-800 rounded-3xl p-6 shadow-2xl flex flex-col justify-center text-center border-4 border-emerald-400/30 flex-1">
+                <p class="text-xs font-bold uppercase tracking-widest text-emerald-200 mb-1">Nomor Antrian Sekarang</p>
+                <h2 id="tvQueueNumber" class="text-7xl font-black tracking-wider text-white my-2">--</h2>
+                <p id="tvPatientName" class="text-xl font-bold text-emerald-50 mb-0.5">-</p>
+                <p id="tvPatientPoli" class="text-xs font-medium text-emerald-200 mb-3">-</p>
+                <div class="inline-block bg-black/20 px-3 py-1.5 rounded-xl backdrop-blur border border-white/10 mx-auto">
+                    <p class="text-xs font-medium text-emerald-100">Silakan Menuju Ruang Pemeriksaan 1</p>
+                </div>
+            </div>
+
+            <!-- Daftar Antrian Berikutnya -->
+            <div class="bg-slate-800/80 backdrop-blur rounded-3xl p-5 shadow-xl border border-slate-700 flex flex-col flex-1 max-h-[220px]">
+                <h3 class="text-sm font-bold text-slate-300 mb-2 border-b border-slate-700 pb-2 flex justify-between items-center">
+                    <span>Antrian Selanjutnya</span>
+                    <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-semibold">Live Sync</span>
+                </h3>
+                <div id="tvNextList" class="space-y-2 overflow-y-auto flex-grow pr-1">
+                    <!-- Data antrian berikutnya -->
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Teks Berjalan Footer -->
     <footer
-        class="bg-slate-800/80 backdrop-blur px-6 py-3 rounded-xl text-center text-slate-400 text-xs border border-slate-700">
-        <marquee scrollamount="5">Selamat datang di Klinik Sehat. Prioritas pelayanan diberikan kepada pasien lansia dan
-            darurat. Tetap jaga kesehatan dan kebersihan gigi Anda!</marquee>
+        class="bg-slate-800/80 backdrop-blur px-6 py-3 rounded-xl text-center text-emerald-400 text-sm font-medium border border-slate-700">
+        <marquee scrollamount="5">Selamat datang di DENTIST - Praktek Dokter Gigi & Specialist Dental Care. Periksakan kesehatan gigi Anda secara berkala setiap 6 bulan sekali. Prioritas pelayanan diberikan kepada pasien lansia, anak-anak, dan kondisi darurat. Terima kasih atas kepercayaan Anda.</marquee>
     </footer>
 
     <script>
