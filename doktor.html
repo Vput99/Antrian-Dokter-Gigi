@@ -68,16 +68,20 @@
                     </div>
                     <div class="mt-6 space-y-2">
                         <button onclick="callNext()"
-                            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-xl text-sm transition shadow-sm">
+                            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition shadow-sm">
                             Panggil Antrian Berikutnya 🔊
                         </button>
-                        <div class="grid grid-cols-2 gap-2">
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="repeatCallCurrent()"
+                                class="bg-amber-50 hover:bg-amber-100 text-amber-700 font-medium py-2 px-2 rounded-xl text-xs transition border border-amber-200">
+                                🔊 Panggil Ulang
+                            </button>
                             <button onclick="markDone()"
-                                class="bg-sky-50 hover:bg-sky-100 text-sky-700 font-medium py-2 px-3 rounded-xl text-xs transition border border-sky-200">
-                                ✅ Selesai Periksa
+                                class="bg-sky-50 hover:bg-sky-100 text-sky-700 font-medium py-2 px-2 rounded-xl text-xs transition border border-sky-200">
+                                ✅ Selesai
                             </button>
                             <button onclick="skipPatient()"
-                                class="bg-red-50 hover:bg-red-100 text-red-600 font-medium py-2 px-3 rounded-xl text-xs transition border border-red-200">
+                                class="bg-red-50 hover:bg-red-100 text-red-600 font-medium py-2 px-2 rounded-xl text-xs transition border border-red-200">
                                 ⏭️ Lewati
                             </button>
                         </div>
@@ -123,6 +127,7 @@
                                 <th class="py-2.5 px-3">Kontak / NIK</th>
                                 <th class="py-2.5 px-3">Poli</th>
                                 <th class="py-2.5 px-3">Status</th>
+                                <th class="py-2.5 px-3 text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="doctorQueueBody" class="text-sm text-slate-700">
@@ -216,11 +221,43 @@
                             <td class="py-3 px-3 text-xs text-slate-400">${item.nik_phone}</td>
                             <td class="py-3 px-3 text-xs font-medium text-slate-600">${item.poli || 'Poli Gigi & Mulut'}</td>
                             <td class="py-3 px-3">${getStatusBadge(item.status)}</td>
+                            <td class="py-3 px-3 text-right">
+                                <button onclick="speakQueue('${item.queue_number}', '${item.name}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs px-3 py-1.5 rounded-lg transition shadow-sm flex items-center gap-1 ml-auto">
+                                    🔊 Panggil
+                                </button>
+                            </td>
                         </tr>
                     `;
                 });
             } catch (err) {
                 console.error('Gagal memuat data dokter:', err);
+            }
+        }
+
+        // ============================================================
+        // Fungsi pembacaan suara panggil antrian
+        // ============================================================
+        function speakQueue(queueNumber, name) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const text = `Nomor antrian, ${queueNumber.split('').join(' ')}, atas nama, ${name}, silakan masuk ke ruang pemeriksaan.`;
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'id-ID';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // ============================================================
+        // Panggil ulang pasien yang sedang diperiksa
+        // ============================================================
+        function repeatCallCurrent() {
+            const queueNum = document.getElementById('currentQueueNumber').innerText;
+            const name = document.getElementById('currentPatientName').innerText;
+            if (queueNum && queueNum !== '-' && name && name !== '-') {
+                speakQueue(queueNum, name);
+            } else {
+                alert('Belum ada pasien yang sedang dipanggil/diperiksa.');
             }
         }
 
@@ -234,17 +271,7 @@
 
                 if (result.data) {
                     const patient = result.data;
-
-                    // Suara panggilan
-                    if ('speechSynthesis' in window) {
-                        window.speechSynthesis.cancel(); // Hentikan suara sebelumnya
-                        const text = `Nomor antrian, ${patient.queue_number.split('').join(' ')}, atas nama, ${patient.name}, silakan masuk ke ruang pemeriksaan satu.`;
-                        const utterance = new SpeechSynthesisUtterance(text);
-                        utterance.lang = 'id-ID';
-                        utterance.rate = 0.9;
-                        window.speechSynthesis.speak(utterance);
-                    }
-
+                    speakQueue(patient.queue_number, patient.name);
                     fetchDoctorData();
                 } else {
                     alert('Tidak ada antrian untuk dipanggil.');

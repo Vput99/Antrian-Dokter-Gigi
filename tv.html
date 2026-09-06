@@ -8,34 +8,34 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 
-<body class="bg-slate-900 text-white font-sans h-screen overflow-hidden flex flex-col justify-between p-6">
+<body class="bg-gradient-to-br from-slate-50 via-teal-50/30 to-emerald-50 text-slate-800 font-sans h-screen overflow-hidden flex flex-col justify-between p-6">
 
     <!-- Header TV -->
     <header
-        class="flex justify-between items-center bg-slate-800/80 backdrop-blur px-6 py-4 rounded-2xl border border-slate-700">
+        class="flex justify-between items-center bg-white/80 backdrop-blur-md px-6 py-4 rounded-2xl border border-slate-200/80 shadow-md">
         <div class="flex items-center gap-4">
-            <div class="bg-emerald-500 text-slate-900 font-black p-2.5 rounded-xl text-lg">D</div>
+            <div class="bg-emerald-600 text-white font-black p-2.5 rounded-xl text-xl shadow-md shadow-emerald-600/20">D</div>
             <div>
-                <h1 class="text-2xl font-extrabold tracking-wide text-white uppercase">DENTIST</h1>
-                <p class="text-xs text-slate-400">Praktek Dokter Gigi & Specialist Dental Care</p>
+                <h1 class="text-2xl font-black tracking-wider text-slate-900 uppercase">DENTIST</h1>
+                <p class="text-xs font-semibold text-emerald-700">Praktek Dokter Gigi & Specialist Dental Care</p>
             </div>
         </div>
         <div class="text-right">
-            <p id="tvClock" class="text-3xl font-black text-emerald-400 tracking-wider">00:00:00</p>
-            <p class="text-xs text-slate-300 font-medium" id="tvDateDisplay">-</p>
+            <p id="tvClock" class="text-3xl font-black text-emerald-600 tracking-wider">00:00:00</p>
+            <p class="text-xs text-slate-500 font-medium" id="tvDateDisplay">-</p>
         </div>
     </header>
 
     <!-- Konten Utama Display -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto flex-1 items-stretch py-4">
         <!-- Area Video (Kiri) -->
-        <div class="lg:col-span-7 bg-slate-800/80 backdrop-blur rounded-3xl p-4 shadow-xl border border-slate-700 flex flex-col justify-center overflow-hidden min-h-[360px]">
-            <div class="relative w-full h-full rounded-2xl overflow-hidden bg-black flex items-center justify-center">
+        <div class="lg:col-span-7 bg-white/80 backdrop-blur-md rounded-3xl p-4 shadow-lg border border-slate-200/80 flex flex-col justify-center overflow-hidden min-h-[360px]">
+            <div class="relative w-full h-full rounded-2xl overflow-hidden bg-slate-900 flex items-center justify-center border border-slate-200 shadow-inner">
                 <video class="w-full h-full object-cover rounded-2xl" autoplay loop muted controls>
                     <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
                     Browser Anda tidak mendukung pemutar video.
                 </video>
-                <div class="absolute top-3 left-3 bg-black/60 backdrop-blur px-3 py-1 rounded-lg text-[10px] font-semibold text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
+                <div class="absolute top-3 left-3 bg-slate-900/80 backdrop-blur px-3 py-1 rounded-lg text-[10px] font-bold text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 shadow">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                     Edukasi Kesehatan Gigi
                 </div>
@@ -45,21 +45,21 @@
         <!-- Area Informasi Antrian (Kanan) -->
         <div class="lg:col-span-5 flex flex-col gap-4 justify-between">
             <!-- Kotak Panggilan Utama -->
-            <div class="bg-gradient-to-br from-emerald-600 to-teal-800 rounded-3xl p-6 shadow-2xl flex flex-col justify-center text-center border-4 border-emerald-400/30 flex-1">
-                <p class="text-xs font-bold uppercase tracking-widest text-emerald-200 mb-1">Nomor Antrian Sekarang</p>
-                <h2 id="tvQueueNumber" class="text-7xl font-black tracking-wider text-white my-2">--</h2>
-                <p id="tvPatientName" class="text-xl font-bold text-emerald-50 mb-0.5">-</p>
-                <p id="tvPatientPoli" class="text-xs font-medium text-emerald-200 mb-3">-</p>
-                <div class="inline-block bg-black/20 px-3 py-1.5 rounded-xl backdrop-blur border border-white/10 mx-auto">
-                    <p class="text-xs font-medium text-emerald-100">Silakan Menuju Ruang Pemeriksaan 1</p>
+            <div class="bg-gradient-to-br from-emerald-500 via-teal-600 to-emerald-700 text-white rounded-3xl p-6 shadow-xl flex flex-col justify-center text-center border-4 border-emerald-300/40 flex-1">
+                <p class="text-xs font-bold uppercase tracking-widest text-emerald-100 mb-1">Nomor Antrian Sekarang</p>
+                <h2 id="tvQueueNumber" class="text-7xl font-black tracking-wider text-white my-2 drop-shadow-md">--</h2>
+                <p id="tvPatientName" class="text-xl font-bold text-white mb-0.5">-</p>
+                <p id="tvPatientPoli" class="text-xs font-medium text-emerald-100 mb-3">-</p>
+                <div class="inline-block bg-white/15 px-4 py-1.5 rounded-xl backdrop-blur border border-white/20 mx-auto shadow-sm">
+                    <p class="text-xs font-semibold text-emerald-50">Silakan Menuju Ruang Pemeriksaan 1</p>
                 </div>
             </div>
 
             <!-- Daftar Antrian Berikutnya -->
-            <div class="bg-slate-800/80 backdrop-blur rounded-3xl p-5 shadow-xl border border-slate-700 flex flex-col flex-1 max-h-[220px]">
-                <h3 class="text-sm font-bold text-slate-300 mb-2 border-b border-slate-700 pb-2 flex justify-between items-center">
+            <div class="bg-white/80 backdrop-blur-md rounded-3xl p-5 shadow-lg border border-slate-200/80 flex flex-col flex-1 max-h-[220px]">
+                <h3 class="text-sm font-bold text-slate-700 mb-2 border-b border-slate-100 pb-2 flex justify-between items-center">
                     <span>Antrian Selanjutnya</span>
-                    <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-semibold">Live Sync</span>
+                    <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full font-bold">Live Sync</span>
                 </h3>
                 <div id="tvNextList" class="space-y-2 overflow-y-auto flex-grow pr-1">
                     <!-- Data antrian berikutnya -->
@@ -70,7 +70,7 @@
 
     <!-- Teks Berjalan Footer -->
     <footer
-        class="bg-slate-800/80 backdrop-blur px-6 py-3 rounded-xl text-center text-emerald-400 text-sm font-medium border border-slate-700">
+        class="bg-white/80 backdrop-blur-md px-6 py-3 rounded-xl text-center text-emerald-800 text-sm font-bold border border-slate-200/80 shadow-md">
         <marquee scrollamount="5">Selamat datang di DENTIST - Praktek Dokter Gigi & Specialist Dental Care. Periksakan kesehatan gigi Anda secara berkala setiap 6 bulan sekali. Prioritas pelayanan diberikan kepada pasien lansia, anak-anak, dan kondisi darurat. Terima kasih atas kepercayaan Anda.</marquee>
     </footer>
 
@@ -115,7 +115,7 @@
                         lastCalledId = inProgress.id;
                         if ('speechSynthesis' in window) {
                             window.speechSynthesis.cancel();
-                            const text = `Nomor antrian, ${inProgress.queue_number.split('').join(' ')}, atas nama, ${inProgress.name}, silakan menuju ruang pemeriksaan satu.`;
+                            const text = `Nomor antrian, ${inProgress.queue_number.split('').join(' ')}, atas nama, ${inProgress.name}, silakan masuk ke ruang pemeriksaan.`;
                             const utterance = new SpeechSynthesisUtterance(text);
                             utterance.lang = 'id-ID';
                             utterance.rate = 0.9;
@@ -134,18 +134,18 @@
 
                 const nextWaiting = waitingList.slice(0, 5);
                 if (nextWaiting.length === 0) {
-                    nextList.innerHTML = `<p class="text-slate-500 text-center py-8 text-xs">Belum ada antrian berikutnya.</p>`;
+                    nextList.innerHTML = `<p class="text-slate-400 text-center py-8 text-xs">Belum ada antrian berikutnya.</p>`;
                 } else {
                     nextWaiting.forEach((q, index) => {
                         nextList.innerHTML += `
-                            <div class="bg-slate-700/40 p-3.5 rounded-2xl flex justify-between items-center border border-slate-600/50">
+                            <div class="bg-slate-50/80 p-3 rounded-2xl flex justify-between items-center border border-slate-200/80 shadow-sm">
                                 <div class="flex items-center gap-3">
-                                    <span class="text-xs bg-slate-600/50 text-slate-300 px-2 py-0.5 rounded-full font-medium">${index + 1}</span>
-                                    <span class="text-xl font-extrabold text-emerald-400">${q.queue_number}</span>
+                                    <span class="text-xs bg-slate-200/70 text-slate-600 px-2 py-0.5 rounded-full font-bold">${index + 1}</span>
+                                    <span class="text-xl font-black text-emerald-600">${q.queue_number}</span>
                                 </div>
                                 <div class="text-right">
-                                    <span class="text-sm font-medium text-slate-200">${q.name}</span>
-                                    <p class="text-[10px] text-slate-400">${q.poli || 'Poli Gigi & Mulut'}</p>
+                                    <span class="text-sm font-bold text-slate-700">${q.name}</span>
+                                    <p class="text-[10px] text-slate-400 font-medium">${q.poli || 'Poli Gigi & Mulut'}</p>
                                 </div>
                             </div>
                         `;
