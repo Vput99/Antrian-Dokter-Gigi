@@ -4,161 +4,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitor Ruang Tunggu - Klinik Sehat</title>
+    <title>Display Ruang Tunggu TV - Klinik Sehat</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        @keyframes pulse-subtle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.95; transform: scale(1.01); }
+        }
+        .animate-calling {
+            animation: pulse-subtle 2s infinite ease-in-out;
+        }
+    </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-50 via-teal-50/30 to-emerald-50 text-slate-800 font-sans h-screen overflow-hidden flex flex-col justify-between p-6">
+<body class="bg-gradient-to-br from-slate-50 via-teal-50/30 to-emerald-50 h-screen flex flex-col justify-between overflow-hidden font-sans text-slate-800">
 
-    <!-- Header TV -->
-    <header
-        class="flex justify-between items-center bg-white/80 backdrop-blur-md px-6 py-4 rounded-2xl border border-slate-200/80 shadow-md">
+    <!-- Header Atas (Nama Klinik, Sub-Judul, Jam & Tanggal Realtime) -->
+    <header class="bg-white/80 backdrop-blur-md px-8 py-4 border-b border-teal-100 shadow-xs flex justify-between items-center">
         <div class="flex items-center gap-4">
-            <div class="bg-emerald-600 text-white font-black p-2.5 rounded-xl text-xl shadow-md shadow-emerald-600/20">D</div>
+            <div class="bg-gradient-to-tr from-emerald-600 to-teal-500 text-white p-3 rounded-2xl shadow-md font-black text-2xl tracking-wider">
+                🦷
+            </div>
             <div>
-                <h1 class="text-2xl font-black tracking-wider text-slate-900 uppercase">DENTIST</h1>
-                <p class="text-xs font-semibold text-emerald-700">Praktek Dokter Gigi & Specialist Dental Care</p>
+                <h1 id="tvClinicName" class="text-2xl font-black tracking-tight text-slate-800 uppercase">DENTIST</h1>
+                <p id="tvSubtitle" class="text-xs font-semibold text-emerald-600 tracking-wide uppercase">Praktek Dokter Gigi & Specialist Dental Care</p>
             </div>
         </div>
-        <div class="text-right">
-            <p id="tvClock" class="text-3xl font-black text-emerald-600 tracking-wider">00:00:00</p>
-            <p class="text-xs text-slate-500 font-medium" id="tvDateDisplay">-</p>
+
+        <div class="bg-white px-6 py-2.5 rounded-2xl border border-slate-200/80 shadow-xs text-right">
+            <div id="tvClock" class="text-2xl font-black text-emerald-700 tracking-tight">00:00:00 WIB</div>
+            <div id="tvDateDisplay" class="text-xs font-bold text-slate-400">Senin, 1 Januari 2026</div>
         </div>
     </header>
 
-    <!-- Konten Utama Display -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto flex-1 items-stretch py-4">
-        <!-- Area Video (Kiri) -->
-        <div class="lg:col-span-7 bg-white/80 backdrop-blur-md rounded-3xl p-4 shadow-lg border border-slate-200/80 flex flex-col justify-center overflow-hidden min-h-[360px]">
-            <div class="relative w-full h-full rounded-2xl overflow-hidden bg-slate-900 flex items-center justify-center border border-slate-200 shadow-inner">
-                <video class="w-full h-full object-cover rounded-2xl" autoplay loop muted controls>
-                    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-                    Browser Anda tidak mendukung pemutar video.
+    <!-- Konten Utama: 2 Kolom (Kiri: Video + Status Panggilan, Kanan: Daftar Antrian) -->
+    <main class="flex-1 grid grid-cols-12 gap-6 p-6 overflow-hidden">
+
+        <!-- Kolom Kiri (Lebar 7): Media Video Edukasi & Nomor Dipanggil -->
+        <section class="col-span-12 lg:col-span-7 flex flex-col gap-6 h-full">
+
+            <!-- Video Player Edukasi -->
+            <div class="bg-black rounded-3xl overflow-hidden border border-slate-200/80 shadow-md relative flex-1 min-h-[260px] flex items-center justify-center">
+                <video class="w-full h-full object-cover" autoplay loop muted playsinline>
+                    <source src="https://assets.mixkit.co/videos/preview/mixkit-dentist-examining-a-patients-teeth-41511-large.mp4" type="video/mp4">
+                    Browser Anda tidak mendukung penayangan video.
                 </video>
-                <div class="absolute top-3 left-3 bg-slate-900/80 backdrop-blur px-3 py-1 rounded-lg text-[10px] font-bold text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 shadow">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    Edukasi Kesehatan Gigi
+                <div class="absolute top-4 left-4 bg-slate-900/60 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1.5 rounded-full border border-white/20 uppercase tracking-widest flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Edukasi Kesehatan Gigi
                 </div>
             </div>
+
+            <!-- Banner Antrian Sedang Dipanggil -->
+            <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 rounded-3xl p-6 text-white shadow-xl border border-emerald-500/30 flex items-center justify-between relative overflow-hidden animate-calling">
+                <div class="relative z-10">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="px-3 py-0.5 bg-white/20 backdrop-blur-md rounded-full text-[11px] font-bold uppercase tracking-wider text-emerald-100">Sedang Dipanggil</span>
+                        <span class="text-xs text-emerald-100 font-medium">• Ruang Pemeriksaan 1</span>
+                    </div>
+                    <div id="tvCurrentQueue" class="text-6xl font-black tracking-tight text-yellow-300 my-1 drop-shadow-sm">-</div>
+                    <div id="tvCurrentPatientName" class="text-xl font-bold text-white tracking-wide">Menunggu panggilan...</div>
+                </div>
+
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 text-center min-w-[150px] relative z-10">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-100 mb-1">Poli Tujuan</p>
+                    <p id="tvCurrentPoli" class="text-sm font-black text-white">Poli Gigi & Mulut</p>
+                </div>
+
+                <!-- Accent Glow -->
+                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+            </div>
+        </section>
+
+        <!-- Kolom Kanan (Lebar 5): Daftar Antrian Berikutnya -->
+        <section class="col-span-12 lg:col-span-5 flex flex-col h-full bg-white/90 backdrop-blur-md rounded-3xl border border-slate-200/80 shadow-md p-6">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
+                <div>
+                    <h2 class="font-black text-slate-800 text-lg tracking-tight">Antrian Berikutnya</h2>
+                    <p class="text-xs text-slate-400 font-medium">Pasien di ruang tunggu</p>
+                </div>
+                <span id="tvTotalWaitingBadge" class="bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full border border-emerald-100">0 Pasien Waiting</span>
+            </div>
+
+            <!-- List Card Antrian Waiting -->
+            <div id="tvWaitingListContainer" class="flex-1 overflow-y-auto space-y-3 pr-1">
+                <!-- Data antrian dimuat via JS -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Marquee Teks Berjalan -->
+    <footer class="bg-slate-900 text-slate-200 py-3 px-6 border-t border-slate-800 flex items-center gap-4 text-sm shadow-inner">
+        <div class="bg-emerald-500 text-slate-950 font-black text-xs px-3 py-1 rounded-lg uppercase tracking-wider shrink-0 shadow-xs">
+            INFO KLINIK
         </div>
-
-        <!-- Area Informasi Antrian (Kanan) -->
-        <div class="lg:col-span-5 flex flex-col gap-4 justify-between">
-            <!-- Kotak Panggilan Utama -->
-            <div class="bg-gradient-to-br from-emerald-500 via-teal-600 to-emerald-700 text-white rounded-3xl p-6 shadow-xl flex flex-col justify-center text-center border-4 border-emerald-300/40 flex-1">
-                <p class="text-xs font-bold uppercase tracking-widest text-emerald-100 mb-1">Nomor Antrian Sekarang</p>
-                <h2 id="tvQueueNumber" class="text-7xl font-black tracking-wider text-white my-2 drop-shadow-md">--</h2>
-                <p id="tvPatientName" class="text-xl font-bold text-white mb-0.5">-</p>
-                <p id="tvPatientPoli" class="text-xs font-medium text-emerald-100 mb-3">-</p>
-                <div class="inline-block bg-white/15 px-4 py-1.5 rounded-xl backdrop-blur border border-white/20 mx-auto shadow-sm">
-                    <p class="text-xs font-semibold text-emerald-50">Silakan Menuju Ruang Pemeriksaan 1</p>
-                </div>
-            </div>
-
-            <!-- Daftar Antrian Berikutnya -->
-            <div class="bg-white/80 backdrop-blur-md rounded-3xl p-5 shadow-lg border border-slate-200/80 flex flex-col flex-1 max-h-[220px]">
-                <h3 class="text-sm font-bold text-slate-700 mb-2 border-b border-slate-100 pb-2 flex justify-between items-center">
-                    <span>Antrian Selanjutnya</span>
-                    <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full font-bold">Live Sync</span>
-                </h3>
-                <div id="tvNextList" class="space-y-2 overflow-y-auto flex-grow pr-1">
-                    <!-- Data antrian berikutnya -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Teks Berjalan Footer -->
-    <footer
-        class="bg-white/80 backdrop-blur-md px-6 py-3 rounded-xl text-center text-emerald-800 text-sm font-bold border border-slate-200/80 shadow-md">
-        <marquee scrollamount="5">Selamat datang di DENTIST - Praktek Dokter Gigi & Specialist Dental Care. Periksakan kesehatan gigi Anda secara berkala setiap 6 bulan sekali. Prioritas pelayanan diberikan kepada pasien lansia, anak-anak, dan kondisi darurat. Terima kasih atas kepercayaan Anda.</marquee>
+        <marquee id="tvRunningText" behavior="scroll" direction="left" class="font-medium text-emerald-200 tracking-wide text-sm">
+            Selamat datang di Praktek Dokter Gigi. Utamakan kesehatan dan kebersihan gigi Anda. Mohon menunggu nomor antrian dipanggil dengan tertib.
+        </marquee>
     </footer>
 
     <script>
         const API_URL = 'http://localhost:5000/api/queues';
-        let lastCalledId = null;
+        const SETTINGS_URL = 'http://localhost:5000/api/settings';
 
-        // ============================================================
-        // Jam & Tanggal Realtime
-        // ============================================================
+        async function fetchSettings() {
+            try {
+                const res = await fetch(SETTINGS_URL);
+                const result = await res.json();
+                if (result.data) {
+                    if (result.data.clinic_name) document.getElementById('tvClinicName').innerText = result.data.clinic_name;
+                    if (result.data.subtitle) document.getElementById('tvSubtitle').innerText = result.data.subtitle;
+                    if (result.data.running_text) document.getElementById('tvRunningText').innerText = result.data.running_text;
+                }
+            } catch (e) {
+                console.error('Gagal memuat pengaturan TV:', e);
+            }
+        }
+
         function updateClock() {
             const now = new Date();
-            document.getElementById('tvClock').innerText = now.toLocaleTimeString('id-ID');
+            document.getElementById('tvClock').innerText = now.toLocaleTimeString('id-ID') + ' WIB';
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             document.getElementById('tvDateDisplay').innerText = now.toLocaleDateString('id-ID', options);
         }
         setInterval(updateClock, 1000);
         updateClock();
 
-        // ============================================================
-        // Update TV Display — sinkronisasi berdasarkan status
-        // ============================================================
-        async function updateTV() {
+        async function fetchTVData() {
             try {
                 const response = await fetch(API_URL);
                 const result = await response.json();
-                const queues = result.data;
+                const queues = result.data || [];
 
-                // Cari pasien yang sedang diperiksa (in_progress)
                 const inProgress = queues.find(q => q.status === 'in_progress');
-                // Daftar pasien yang masih menunggu
                 const waitingList = queues.filter(q => q.status === 'waiting');
 
                 if (inProgress) {
-                    // Tampilkan pasien yang sedang dipanggil
-                    document.getElementById('tvQueueNumber').innerText = inProgress.queue_number;
-                    document.getElementById('tvPatientName').innerText = inProgress.name;
-                    document.getElementById('tvPatientPoli').innerText = inProgress.poli || 'Poli Gigi & Mulut';
-
-                    // Suara panggilan otomatis saat ada pasien baru dipanggil
-                    if (lastCalledId !== inProgress.id) {
-                        lastCalledId = inProgress.id;
-                        if ('speechSynthesis' in window) {
-                            window.speechSynthesis.cancel();
-                            const text = `Nomor antrian, ${inProgress.queue_number.split('').join(' ')}, atas nama, ${inProgress.name}, silakan masuk ke ruang pemeriksaan.`;
-                            const utterance = new SpeechSynthesisUtterance(text);
-                            utterance.lang = 'id-ID';
-                            utterance.rate = 0.9;
-                            window.speechSynthesis.speak(utterance);
-                        }
-                    }
+                    document.getElementById('tvCurrentQueue').innerText = inProgress.queue_number;
+                    document.getElementById('tvCurrentPatientName').innerText = inProgress.name;
+                    document.getElementById('tvCurrentPoli').innerText = inProgress.poli || 'Poli Gigi & Mulut';
                 } else {
-                    document.getElementById('tvQueueNumber').innerText = '--';
-                    document.getElementById('tvPatientName').innerText = waitingList.length > 0 ? 'Menunggu panggilan...' : 'Belum ada antrian';
-                    document.getElementById('tvPatientPoli').innerText = '-';
+                    document.getElementById('tvCurrentQueue').innerText = '-';
+                    document.getElementById('tvCurrentPatientName').innerText = waitingList.length > 0 ? 'Menunggu Panggilan Dokter...' : 'Antrian Masih Kosong';
+                    document.getElementById('tvCurrentPoli').innerText = 'Poli Gigi & Mulut';
                 }
 
-                // Render daftar antrian berikutnya (hanya waiting, max 5)
-                const nextList = document.getElementById('tvNextList');
-                nextList.innerHTML = '';
+                document.getElementById('tvTotalWaitingBadge').innerText = `${waitingList.length} Pasien Waiting`;
 
-                const nextWaiting = waitingList.slice(0, 5);
-                if (nextWaiting.length === 0) {
-                    nextList.innerHTML = `<p class="text-slate-400 text-center py-8 text-xs">Belum ada antrian berikutnya.</p>`;
-                } else {
-                    nextWaiting.forEach((q, index) => {
-                        nextList.innerHTML += `
-                            <div class="bg-slate-50/80 p-3 rounded-2xl flex justify-between items-center border border-slate-200/80 shadow-sm">
-                                <div class="flex items-center gap-3">
-                                    <span class="text-xs bg-slate-200/70 text-slate-600 px-2 py-0.5 rounded-full font-bold">${index + 1}</span>
-                                    <span class="text-xl font-black text-emerald-600">${q.queue_number}</span>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-sm font-bold text-slate-700">${q.name}</span>
-                                    <p class="text-[10px] text-slate-400 font-medium">${q.poli || 'Poli Gigi & Mulut'}</p>
+                const container = document.getElementById('tvWaitingListContainer');
+                container.innerHTML = '';
+
+                if (waitingList.length === 0) {
+                    container.innerHTML = `
+                        <div class="p-8 text-center text-slate-400 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 my-auto">
+                            <p class="text-2xl mb-1">☕</p>
+                            <p class="text-xs font-semibold">Tidak ada pasien menunggu saat ini</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                waitingList.forEach((q, idx) => {
+                    const card = `
+                        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-emerald-300 transition flex justify-between items-center">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 font-extrabold text-xs flex items-center justify-center border border-emerald-100">
+                                    ${idx + 1}
+                                </span>
+                                <div>
+                                    <h4 class="font-bold text-slate-800 text-sm">${q.name}</h4>
+                                    <p class="text-[11px] font-medium text-slate-400">${q.poli || 'Poli Gigi & Mulut'}</p>
                                 </div>
                             </div>
-                        `;
-                    });
-                }
+                            <span class="text-xl font-black text-emerald-600 tracking-tight px-3 py-1 bg-emerald-50/50 rounded-xl border border-emerald-100/50">
+                                ${q.queue_number}
+                            </span>
+                        </div>
+                    `;
+                    container.innerHTML += card;
+                });
+
             } catch (err) {
-                console.error('Error TV sync:', err);
+                console.error('Gagal mengambil data TV:', err);
             }
         }
 
-        // Inisialisasi
-        updateTV();
-        setInterval(updateTV, 3000);
+        fetchSettings();
+        fetchTVData();
+        setInterval(fetchTVData, 2000);
     </script>
 </body>
 
