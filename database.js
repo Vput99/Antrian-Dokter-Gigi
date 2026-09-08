@@ -28,6 +28,19 @@ db.serialize(() => {
         FOREIGN KEY(patient_id) REFERENCES patients(id)
     )`);
 
+    db.run(`CREATE TABLE IF NOT EXISTS settings (
+        id INTEGER PRIMARY KEY CHECK (id = 1),
+        clinic_name TEXT DEFAULT 'Klinik Sehat',
+        subtitle TEXT DEFAULT 'Sistem Antrian Terpadu',
+        address TEXT DEFAULT 'Jl. Kesehatan No. 123, Jakarta',
+        phone TEXT DEFAULT '021-5551234',
+        running_text TEXT DEFAULT 'Selamat datang di Klinik Sehat. Utamakan keselamatan dan kesehatan Anda. Harap menunggu nomor antrian dipanggil.'
+    )`);
+
+    // Insert default setting row if empty
+    db.run(`INSERT OR IGNORE INTO settings (id, clinic_name, subtitle, address, phone, running_text)
+            VALUES (1, 'Klinik Sehat', 'Sistem Antrian Terpadu', 'Jl. Kesehatan No. 123, Jakarta', '021-5551234', 'Selamat datang di Klinik Sehat. Utamakan keselamatan dan kesehatan Anda. Harap menunggu nomor antrian dipanggil.')`);
+
     // Migrasi: tambah kolom jika belum ada (untuk database versi lama)
     db.run(`ALTER TABLE queues ADD COLUMN patient_id INTEGER`, (err) => {
         if (err && !err.message.includes('duplicate column')) {

@@ -9,6 +9,71 @@ app.use(express.json());
 app.use(express.static(__dirname));
 
 // ============================================================
+// GET /api/settings — Ambil pengaturan nama klinik & running text
+// ============================================================
+app.get('/api/settings', (req, res) => {
+    db.get(`SELECT * FROM settings WHERE id = 1`, [], (err, row) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json({ data: row || {} });
+    });
+});
+
+// ============================================================
+// PUT /api/settings — Update pengaturan nama klinik & running text
+// ============================================================
+app.put('/api/settings', (req, res) => {
+    const { clinic_name, subtitle, address, phone, running_text } = req.body;
+    db.run(
+        `UPDATE settings SET
+            clinic_name = COALESCE(?, clinic_name),
+            subtitle = COALESCE(?, subtitle),
+            address = COALESCE(?, address),
+            phone = COALESCE(?, phone),
+            running_text = COALESCE(?, running_text)
+         WHERE id = 1`,
+        [clinic_name, subtitle, address, phone, running_text],
+        function (err) {
+            if (err) {
+                res.status(500).json({ error: err.message });
+                return;
+            }
+            res.json({ message: 'Pengaturan berhasil diperbarui' });
+        }
+    );
+});
+
+// ============================================================
+// GET /api/queues/export — Export data antrian ke CSV
+// ============================================================
+app.get('/api/queues/export', (req, res) => {
+    db.all(
+        `SELECT q.id, q.queue_number, COALESCE(p.name, 'Pasien Umum') as name, COALESCE(p.nik_phone, '-') as nik_phone, q.poli, q.status, q.created_at
+         FROM queues q
+         LEFT JOIN patients p ON q.patient_id = p.id
+         ORDER BY q.id ASC`,
+        [],
+        (err, rows) => {
+            if (err) {
+                res.status(500).send('Error export data');
+                return;
+            }
+
+            let csv = 'ID,No Tiket,Nama Pasien,NIK/Phone,Poli,Status,Tanggal\n';
+            rows.forEach(r => {
+                csv += `"${r.id}","${r.queue_number}","${r.name}","${r.nik_phone}","${r.poli}","${r.status}","${r.created_at}"\n`;
+            });
+
+            res.setHeader('Content-Type', 'text/csv');
+            res.setHeader('Content-Disposition', 'attachment; filename="Laporan_Antrian_Klinik.csv"');
+            res.status(200).send(csv);
+        }
+    );
+});
+
+// ============================================================
 // GET /api/queues — Ambil semua antrian hari ini
 // ============================================================
 app.get('/api/queues', (req, res) => {
@@ -120,7 +185,6 @@ app.put('/api/queues/:id/status', (req, res) => {
 // Set pasien in_progress sekarang jadi done, lalu set waiting pertama jadi in_progress
 // ============================================================
 app.put('/api/queues/call-next', (req, res) => {
-    // Selesaikan pasien yang sedang diperiksa
     db.run(
         `UPDATE queues SET status = 'done' 
          WHERE status = 'in_progress' AND DATE(created_at) = DATE('now','localtime')`,
@@ -131,7 +195,6 @@ app.put('/api/queues/call-next', (req, res) => {
                 return;
             }
 
-            // Ambil pasien waiting pertama
             db.get(
                 `SELECT q.*, COALESCE(p.name, 'Pasien Umum') as name, COALESCE(p.nik_phone, '-') as nik_phone 
                  FROM queues q 
@@ -150,7 +213,6 @@ app.put('/api/queues/call-next', (req, res) => {
                         return;
                     }
 
-                    // Set pasien ini jadi in_progress
                     db.run(
                         `UPDATE queues SET status = 'in_progress' WHERE id = ?`,
                         [row.id],
@@ -171,7 +233,6 @@ app.put('/api/queues/call-next', (req, res) => {
 
 // ============================================================
 // DELETE /api/queues/reset/today — Reset semua antrian hari ini
-// (harus di atas /:id agar tidak tertangkap sebagai parameter)
 // ============================================================
 app.delete('/api/queues/reset/today', (req, res) => {
     db.run(
@@ -208,5 +269,5 @@ app.delete('/api/queues/:id', (req, res) => {
 
 const PORT = 5000;
 app.listen(PORT, () => {
-    console.log(`Server lokal Klinik Gigi jalan di http://localhost:${PORT}`);
+    console.log(`Server lokal Klinik jalan di http://localhost:${PORT}`);
 });

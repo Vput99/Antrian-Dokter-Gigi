@@ -17,8 +17,8 @@
                 <div class="flex items-center gap-3 mb-8">
                     <div class="bg-emerald-600 text-white p-2 rounded-xl font-bold">KS</div>
                     <div>
-                        <h1 class="font-bold text-sm text-slate-800">Klinik Sehat</h1>
-                        <p class="text-xs text-slate-400">Sistem Antrian Terpadu</p>
+                        <h1 class="font-bold text-sm text-slate-800" id="sidebarClinicName">Klinik Sehat</h1>
+                        <p class="text-xs text-slate-400" id="sidebarSubtitle">Sistem Antrian Terpadu</p>
                     </div>
                 </div>
                 <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Modul Operasional</p>
@@ -68,8 +68,8 @@
                     </div>
                     <div class="mt-6 space-y-2">
                         <button onclick="callNext()"
-                            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition shadow-sm">
-                            Panggil Antrian Berikutnya 🔊
+                            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition shadow-sm flex items-center justify-center gap-2">
+                            <span>🔔 Panggil Antrian Berikutnya</span>
                         </button>
                         <div class="grid grid-cols-3 gap-2">
                             <button onclick="repeatCallCurrent()"
@@ -92,8 +92,8 @@
                 <div
                     class="bg-gradient-to-br from-emerald-600 to-teal-700 text-white p-6 rounded-2xl shadow-sm lg:col-span-2 flex flex-col justify-between">
                     <div>
-                        <span class="px-3 py-1 bg-white/20 text-xs font-semibold rounded-full">Poli Gigi & Mulut</span>
-                        <h3 class="text-2xl font-black mt-4">Layanan Utama Klinik Sehat</h3>
+                        <span class="px-3 py-1 bg-white/20 text-xs font-semibold rounded-full" id="headerClinicPoli">Poli Gigi & Mulut</span>
+                        <h3 class="text-2xl font-black mt-4" id="bannerClinicName">Layanan Utama Klinik Sehat</h3>
                         <p class="text-xs text-emerald-100 mt-1 leading-relaxed">Sistem sinkronisasi lokal aktif
                             memastikan panggilan suara dan pembaruan nomor antrian di ruang tunggu berjalan instan tanpa
                             jeda.</p>
@@ -141,11 +141,23 @@
 
     <script>
         const API_URL = 'http://localhost:5000/api/queues';
+        const SETTINGS_URL = 'http://localhost:5000/api/settings';
         let currentPatientId = null;
 
-        // ============================================================
-        // Jam & Tanggal Realtime
-        // ============================================================
+        async function fetchSettings() {
+            try {
+                const res = await fetch(SETTINGS_URL);
+                const result = await res.json();
+                if (result.data) {
+                    document.getElementById('sidebarClinicName').innerText = result.data.clinic_name || 'Klinik Sehat';
+                    document.getElementById('sidebarSubtitle').innerText = result.data.subtitle || 'Sistem Antrian Terpadu';
+                    document.getElementById('bannerClinicName').innerText = `Layanan Utama ${result.data.clinic_name || 'Klinik Sehat'}`;
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
         function updateClock() {
             const now = new Date();
             document.getElementById('clock').innerText = now.toLocaleTimeString('id-ID') + ' WIB';
@@ -155,9 +167,6 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // ============================================================
-        // Badge status dengan warna dinamis
-        // ============================================================
         function getStatusBadge(status) {
             const map = {
                 'waiting': { label: 'Menunggu', classes: 'bg-amber-50 text-amber-700 border-amber-100' },
@@ -169,9 +178,6 @@
             return `<span class="px-2.5 py-1 ${info.classes} text-xs rounded-full font-semibold border">${info.label}</span>`;
         }
 
-        // ============================================================
-        // Fetch & render data dokter
-        // ============================================================
         async function fetchDoctorData() {
             try {
                 const response = await fetch(API_URL);
@@ -185,12 +191,10 @@
                 const doneList = queues.filter(i => i.status === 'done');
                 const skippedList = queues.filter(i => i.status === 'skipped');
 
-                // Update statistik
                 document.getElementById('statRemaining').innerText = `${waitingList.length} Pasien`;
                 document.getElementById('statFinished').innerText = `${doneList.length} Pasien`;
                 document.getElementById('statSkipped').innerText = `${skippedList.length} Pasien`;
 
-                // Update kotak pasien sedang diperiksa
                 if (inProgress) {
                     currentPatientId = inProgress.id;
                     document.getElementById('currentQueueNumber').innerText = inProgress.queue_number;
@@ -205,11 +209,10 @@
                     document.getElementById('currentPatientPoli').innerText = '-';
                 }
 
-                // Render tabel — tampilkan waiting dan in_progress
                 const activeList = queues.filter(i => i.status === 'waiting' || i.status === 'in_progress');
 
                 if (activeList.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400 text-xs">Tidak ada antrian menunggu saat ini.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400 text-xs">Tidak ada antrian menunggu saat ini.</td></tr>`;
                     return;
                 }
 
@@ -223,7 +226,7 @@
                             <td class="py-3 px-3">${getStatusBadge(item.status)}</td>
                             <td class="py-3 px-3 text-right">
                                 <button onclick="speakQueue('${item.queue_number}', '${item.name}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs px-3 py-1.5 rounded-lg transition shadow-sm flex items-center gap-1 ml-auto">
-                                    🔊 Panggil
+                                    🔔 Panggil
                                 </button>
                             </td>
                         </tr>
@@ -234,10 +237,47 @@
             }
         }
 
-        // ============================================================
-        // Fungsi pembacaan suara panggil antrian
-        // ============================================================
-        function speakQueue(queueNumber, name) {
+        // Suara Bel "Ding-Dong" Rumah Sakit menggunakan Web Audio API
+        function playChime() {
+            return new Promise((resolve) => {
+                try {
+                    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+                    // Tone 1 (High tone)
+                    const osc1 = audioCtx.createOscillator();
+                    const gain1 = audioCtx.createGain();
+                    osc1.type = 'sine';
+                    osc1.frequency.setValueAtTime(659.25, audioCtx.currentTime); // E5
+                    gain1.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                    gain1.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
+                    osc1.connect(gain1);
+                    gain1.connect(audioCtx.destination);
+                    osc1.start(audioCtx.currentTime);
+                    osc1.stop(audioCtx.currentTime + 0.8);
+
+                    // Tone 2 (Low tone - chime)
+                    const osc2 = audioCtx.createOscillator();
+                    const gain2 = audioCtx.createGain();
+                    osc2.type = 'sine';
+                    osc2.frequency.setValueAtTime(523.25, audioCtx.currentTime + 0.4); // C5
+                    gain2.gain.setValueAtTime(0.5, audioCtx.currentTime + 0.4);
+                    gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.4);
+                    osc2.connect(gain2);
+                    gain2.connect(audioCtx.destination);
+                    osc2.start(audioCtx.currentTime + 0.4);
+                    osc2.stop(audioCtx.currentTime + 1.4);
+
+                    setTimeout(() => {
+                        resolve();
+                    }, 1400);
+                } catch (e) {
+                    resolve();
+                }
+            });
+        }
+
+        async function speakQueue(queueNumber, name) {
+            await playChime();
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const text = `Nomor antrian, ${queueNumber.split('').join(' ')}, atas nama, ${name}, silakan masuk ke ruang pemeriksaan.`;
@@ -248,9 +288,6 @@
             }
         }
 
-        // ============================================================
-        // Panggil ulang pasien yang sedang diperiksa
-        // ============================================================
         function repeatCallCurrent() {
             const queueNum = document.getElementById('currentQueueNumber').innerText;
             const name = document.getElementById('currentPatientName').innerText;
@@ -261,9 +298,6 @@
             }
         }
 
-        // ============================================================
-        // Panggil pasien berikutnya (API call + suara)
-        // ============================================================
         async function callNext() {
             try {
                 const response = await fetch(`${API_URL}/call-next`, { method: 'PUT' });
@@ -282,9 +316,6 @@
             }
         }
 
-        // ============================================================
-        // Selesai periksa — set status jadi done
-        // ============================================================
         async function markDone() {
             if (!currentPatientId) {
                 alert('Tidak ada pasien yang sedang diperiksa.');
@@ -308,9 +339,6 @@
             }
         }
 
-        // ============================================================
-        // Lewati/skip pasien — set status jadi skipped
-        // ============================================================
         async function skipPatient() {
             if (!currentPatientId) {
                 alert('Tidak ada pasien yang sedang diperiksa.');
@@ -336,7 +364,7 @@
             }
         }
 
-        // Inisialisasi
+        fetchSettings();
         fetchDoctorData();
         setInterval(fetchDoctorData, 3000);
     </script>
