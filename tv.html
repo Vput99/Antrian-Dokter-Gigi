@@ -14,26 +14,39 @@
         .animate-calling {
             animation: pulse-subtle 2s infinite ease-in-out;
         }
+
+        /* Medical Geometric Background Pattern */
+        .tv-bg-pattern {
+            background-color: #0f172a;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.25) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.25) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(20, 184, 166, 0.2) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(15, 23, 42, 0.8) 0px, transparent 50%),
+                linear-gradient(135deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
+                linear-gradient(225deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%);
+            background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+        }
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-50 via-teal-50/30 to-emerald-50 h-screen flex flex-col justify-between overflow-hidden font-sans text-slate-800">
+<body class="tv-bg-pattern h-screen flex flex-col justify-between overflow-hidden font-sans text-slate-100">
 
     <!-- Header Atas (Nama Klinik, Sub-Judul, Jam & Tanggal Realtime) -->
-    <header class="bg-white/80 backdrop-blur-md px-8 py-4 border-b border-teal-100 shadow-xs flex justify-between items-center">
+    <header class="bg-slate-900/80 backdrop-blur-md px-8 py-4 border-b border-slate-700/60 shadow-lg flex justify-between items-center">
         <div class="flex items-center gap-4">
-            <div class="bg-gradient-to-tr from-emerald-600 to-teal-500 text-white p-3 rounded-2xl shadow-md font-black text-2xl tracking-wider">
+            <div class="bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 p-3 rounded-2xl shadow-lg font-black text-2xl tracking-wider">
                 🦷
             </div>
             <div>
-                <h1 id="tvClinicName" class="text-2xl font-black tracking-tight text-slate-800 uppercase">DENTIST</h1>
-                <p id="tvSubtitle" class="text-xs font-semibold text-emerald-600 tracking-wide uppercase">Praktek Dokter Gigi & Specialist Dental Care</p>
+                <h1 id="tvClinicName" class="text-2xl font-black tracking-tight text-white uppercase drop-shadow-sm">DENTIST</h1>
+                <p id="tvSubtitle" class="text-xs font-bold text-emerald-400 tracking-wide uppercase">Praktek Dokter Gigi & Specialist Dental Care</p>
             </div>
         </div>
 
-        <div class="bg-white px-6 py-2.5 rounded-2xl border border-slate-200/80 shadow-xs text-right">
-            <div id="tvClock" class="text-2xl font-black text-emerald-700 tracking-tight">00:00:00 WIB</div>
-            <div id="tvDateDisplay" class="text-xs font-bold text-slate-400">Senin, 1 Januari 2026</div>
+        <div class="bg-slate-800/90 px-6 py-2.5 rounded-2xl border border-slate-700 shadow-md text-right">
+            <div id="tvClock" class="text-2xl font-black text-emerald-400 tracking-tight">00:00:00 WIB</div>
+            <div id="tvDateDisplay" class="text-xs font-semibold text-slate-300">Senin, 1 Januari 2026</div>
         </div>
     </header>
 
@@ -44,29 +57,29 @@
         <section class="col-span-12 lg:col-span-7 flex flex-col gap-6 h-full">
 
             <!-- Video Player Edukasi -->
-            <div class="bg-black rounded-3xl overflow-hidden border border-slate-200/80 shadow-md relative flex-1 min-h-[260px] flex items-center justify-center">
-                <video class="w-full h-full object-cover" autoplay loop muted playsinline>
+            <div class="bg-slate-950 rounded-3xl overflow-hidden border border-slate-700/80 shadow-2xl relative flex-1 min-h-[260px] flex items-center justify-center">
+                <video class="w-full h-full object-cover opacity-90" autoplay loop muted playsinline>
                     <source src="https://assets.mixkit.co/videos/preview/mixkit-dentist-examining-a-patients-teeth-41511-large.mp4" type="video/mp4">
                     Browser Anda tidak mendukung penayangan video.
                 </video>
-                <div class="absolute top-4 left-4 bg-slate-900/60 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1.5 rounded-full border border-white/20 uppercase tracking-widest flex items-center gap-1.5">
+                <div class="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1.5 rounded-full border border-slate-700 uppercase tracking-widest flex items-center gap-1.5 shadow-md">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Edukasi Kesehatan Gigi
                 </div>
             </div>
 
             <!-- Banner Antrian Sedang Dipanggil -->
-            <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 rounded-3xl p-6 text-white shadow-xl border border-emerald-500/30 flex items-center justify-between relative overflow-hidden animate-calling">
+            <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 rounded-3xl p-6 text-white shadow-2xl border border-emerald-400/40 flex items-center justify-between relative overflow-hidden animate-calling">
                 <div class="relative z-10">
                     <div class="flex items-center gap-2 mb-1">
                         <span class="px-3 py-0.5 bg-white/20 backdrop-blur-md rounded-full text-[11px] font-bold uppercase tracking-wider text-emerald-100">Sedang Dipanggil</span>
                         <span class="text-xs text-emerald-100 font-medium">• Ruang Pemeriksaan 1</span>
                     </div>
-                    <div id="tvCurrentQueue" class="text-6xl font-black tracking-tight text-yellow-300 my-1 drop-shadow-sm">-</div>
+                    <div id="tvCurrentQueue" class="text-6xl font-black tracking-tight text-yellow-300 my-1 drop-shadow-md">-</div>
                     <div id="tvCurrentPatientName" class="text-xl font-bold text-white tracking-wide">Menunggu panggilan...</div>
                 </div>
 
-                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 text-center min-w-[150px] relative z-10">
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-100 mb-1">Poli Tujuan</p>
+                <div class="bg-slate-900/40 backdrop-blur-md rounded-2xl p-4 border border-white/20 text-center min-w-[150px] relative z-10 shadow-lg">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-200 mb-1">Poli Tujuan</p>
                     <p id="tvCurrentPoli" class="text-sm font-black text-white">Poli Gigi & Mulut</p>
                 </div>
 
@@ -76,13 +89,13 @@
         </section>
 
         <!-- Kolom Kanan (Lebar 5): Daftar Antrian Berikutnya -->
-        <section class="col-span-12 lg:col-span-5 flex flex-col h-full bg-white/90 backdrop-blur-md rounded-3xl border border-slate-200/80 shadow-md p-6">
-            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
+        <section class="col-span-12 lg:col-span-5 flex flex-col h-full bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-slate-700/80 shadow-2xl p-6">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
                 <div>
-                    <h2 class="font-black text-slate-800 text-lg tracking-tight">Antrian Berikutnya</h2>
+                    <h2 class="font-black text-white text-lg tracking-tight">Antrian Berikutnya</h2>
                     <p class="text-xs text-slate-400 font-medium">Pasien di ruang tunggu</p>
                 </div>
-                <span id="tvTotalWaitingBadge" class="bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full border border-emerald-100">0 Pasien Waiting</span>
+                <span id="tvTotalWaitingBadge" class="bg-emerald-950/80 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full border border-emerald-800/80">0 Pasien Waiting</span>
             </div>
 
             <!-- List Card Antrian Waiting -->
@@ -93,11 +106,11 @@
     </main>
 
     <!-- Footer Marquee Teks Berjalan -->
-    <footer class="bg-slate-900 text-slate-200 py-3 px-6 border-t border-slate-800 flex items-center gap-4 text-sm shadow-inner">
-        <div class="bg-emerald-500 text-slate-950 font-black text-xs px-3 py-1 rounded-lg uppercase tracking-wider shrink-0 shadow-xs">
+    <footer class="bg-slate-950 text-slate-200 py-3 px-6 border-t border-slate-800 flex items-center gap-4 text-sm shadow-2xl">
+        <div class="bg-emerald-500 text-slate-950 font-black text-xs px-3 py-1 rounded-lg uppercase tracking-wider shrink-0 shadow-md">
             INFO KLINIK
         </div>
-        <marquee id="tvRunningText" behavior="scroll" direction="left" class="font-medium text-emerald-200 tracking-wide text-sm">
+        <marquee id="tvRunningText" behavior="scroll" direction="left" class="font-medium text-emerald-300 tracking-wide text-sm">
             Selamat datang di Praktek Dokter Gigi. Utamakan kesehatan dan kebersihan gigi Anda. Mohon menunggu nomor antrian dipanggil dengan tertib.
         </marquee>
     </footer>
@@ -155,7 +168,7 @@
 
                 if (waitingList.length === 0) {
                     container.innerHTML = `
-                        <div class="p-8 text-center text-slate-400 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 my-auto">
+                        <div class="p-8 text-center text-slate-400 bg-slate-800/40 rounded-2xl border border-dashed border-slate-700 my-auto">
                             <p class="text-2xl mb-1">☕</p>
                             <p class="text-xs font-semibold">Tidak ada pasien menunggu saat ini</p>
                         </div>
@@ -165,17 +178,17 @@
 
                 waitingList.forEach((q, idx) => {
                     const card = `
-                        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-emerald-300 transition flex justify-between items-center">
+                        <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/70 shadow-sm hover:border-emerald-500/50 transition flex justify-between items-center">
                             <div class="flex items-center gap-3">
-                                <span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 font-extrabold text-xs flex items-center justify-center border border-emerald-100">
+                                <span class="w-8 h-8 rounded-xl bg-emerald-950/80 text-emerald-400 font-extrabold text-xs flex items-center justify-center border border-emerald-800/80">
                                     ${idx + 1}
                                 </span>
                                 <div>
-                                    <h4 class="font-bold text-slate-800 text-sm">${q.name}</h4>
+                                    <h4 class="font-bold text-white text-sm">${q.name}</h4>
                                     <p class="text-[11px] font-medium text-slate-400">${q.poli || 'Poli Gigi & Mulut'}</p>
                                 </div>
                             </div>
-                            <span class="text-xl font-black text-emerald-600 tracking-tight px-3 py-1 bg-emerald-50/50 rounded-xl border border-emerald-100/50">
+                            <span class="text-xl font-black text-emerald-400 tracking-tight px-3 py-1 bg-emerald-950/60 rounded-xl border border-emerald-800/50">
                                 ${q.queue_number}
                             </span>
                         </div>
