@@ -276,6 +276,21 @@
             });
         }
 
+        function getIndonesianVoice() {
+            if (!('speechSynthesis' in window)) return null;
+            const voices = window.speechSynthesis.getVoices();
+            // Cari suara dengan lang id-ID, id_ID, atau nama yang mengandung Indonesian/Indonesia
+            return voices.find(v => v.lang === 'id-ID' || v.lang === 'id_ID' || v.lang.startsWith('id')) ||
+                   voices.find(v => v.name.toLowerCase().includes('indonesian') || v.name.toLowerCase().includes('indonesia')) ||
+                   null;
+        }
+
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = () => {
+                getIndonesianVoice();
+            };
+        }
+
         async function speakQueue(queueNumber, name) {
             await playChime();
             if ('speechSynthesis' in window) {
@@ -283,7 +298,14 @@
                 const text = `Nomor antrian, ${queueNumber.split('').join(' ')}, atas nama, ${name}, silakan masuk ke ruang pemeriksaan.`;
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.lang = 'id-ID';
-                utterance.rate = 0.9;
+                utterance.rate = 0.85;
+                utterance.pitch = 1.0;
+
+                const indonesianVoice = getIndonesianVoice();
+                if (indonesianVoice) {
+                    utterance.voice = indonesianVoice;
+                }
+
                 window.speechSynthesis.speak(utterance);
             }
         }
